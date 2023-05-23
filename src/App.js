@@ -1,27 +1,28 @@
-import 'bootstrap/dist/css/bootstrap.min.css';
-import './App.css';
-import SearchBar from "./components/SearchBar";
+import {useState} from "react";
+
+import InputBar from "./components/InputBar";
 import Widget from "./components/Widget";
 
-import {useEffect, useState} from "react";
-import axios from "axios";
-import {Container, Row, Col} from "react-bootstrap";
+import 'bootstrap/dist/css/bootstrap.min.css';
+import './App.css';
 
 function App() {
 
-    const [city,setCity] = useState(null);
-    const sendCity = (data) => {
-        setCity(data);
+    const [inputData, setInputData] = useState({city:null, isFahrenheit:false});
+    const input = (cityData, unitData) => {
+        setInputData({city:cityData, isFahrenheit: unitData});
     }
-
-    useEffect(() => {
-
-    },[city])
 
     return (
         <div>
-        <SearchBar sendCity={sendCity}/>
-            {city && <Widget city={city}/>}
+        <InputBar input={input}/>
+            {
+                inputData.city &&
+                <Widget
+                    city={inputData.city}
+                    isFahrenheit={inputData.isFahrenheit}
+                />
+            }
         </div>
   );
 }

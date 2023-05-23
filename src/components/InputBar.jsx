@@ -1,16 +1,15 @@
 import React, {useRef} from 'react';
 import { Button, Col, Container, Form, Row } from "react-bootstrap";
 
-const SearchBar = (props) => {
+const InputBar = (props) => {
 
     const inputRef = useRef(null);
-    const onClick = () => {
-        props.sendCity(inputRef.current.value);
-    }
-    const handleChange = event => {
-        if (event.target.value.trim().length == 0)
-            props.sendCity(null);
+    const unitRef = useRef(null);
+    const handleSubmit = () => props.input(inputRef.current.value, unitRef.current.checked);
+    const handleInputChange = event => {
+        if (event.target.value.trim().length == 0) props.input(null);
     };
+
     return(
         <Container className="m-2">
             <Row>
@@ -22,13 +21,19 @@ const SearchBar = (props) => {
                             className="me-2 rounded-pill"
                             aria-label="Search"
                             ref={inputRef}
-                            onChange={handleChange}
+                            onChange={handleInputChange}
+                        />
+                        <Form.Check className="fahrenheit-switch"
+                            type="switch"
+                            id="custom-switch"
+                            label="°F"
+                            ref={unitRef}
                         />
                         <Button
                             className="rounded-pill"
                             variant="outline-primary"
-                            onClick={onClick}>
-                            Search
+                            onClick={handleSubmit}>
+                            Submit
                         </Button>
                     </Form>
                 </Col>
@@ -37,4 +42,4 @@ const SearchBar = (props) => {
     );
 }
 
-export default SearchBar;
+export default InputBar;

@@ -1,20 +1,25 @@
 import React, {useEffect, useState} from 'react';
 import {Container,Row,Col,Card} from "react-bootstrap";
 
-import apiKey from "../api/api";
-import axios from "axios";
+import {apiURL} from "../config/api";
+import axios, {get} from "axios";
 
-const Widget = ({city}) => {
+const Widget = ({city, isFahrenheit}) => {
 
     const [data, setData] = useState(null);
-    const apiUrl = "https://api.openweathermap.org/data/2.5/weather?appid="+apiKey+"&units=metric&q="+city;
 
-    axios
-        .get("./Temp_RefValues.json")
-        .then((response)=> {
-            console.log("sorgu");
-            setData(response.data);
-        });
+    useEffect(() => {
+        console.log("City:" + city, "isFahrenheit: "+isFahrenheit);
+        console.log(apiURL(city, isFahrenheit))
+        axios
+            .get(apiURL(city, isFahrenheit))
+            .then((response)=> {
+                console.log("sorgu");
+                setData(response.data);
+            });
+
+    },[city, isFahrenheit])
+
 
     return (
         <Container fluid={"md"}>
@@ -30,7 +35,7 @@ const Widget = ({city}) => {
                         <Col>
                             <h5>Tuesday, 10 AM</h5>
                             <h3>{data && data.name}</h3>
-                            <span className="weather__description">{data && data.weather[0].main}</span>
+                            <span className="weather__description">{data && data.weather[0].description}</span>
                         </Col>
                     </Row>
                     <div className="weather__status d-flex flex-row justify-content-center align-items-center mt-3">
