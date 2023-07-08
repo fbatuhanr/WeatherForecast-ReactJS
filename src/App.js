@@ -16,13 +16,13 @@ function App() {
     return (
         <div>
         <InputBar input={input}/>
-            {
-                inputData.city &&
-                <Widget
-                    city={inputData.city}
-                    isFahrenheit={inputData.isFahrenheit}
-                />
-            }
+        {
+            inputData.city &&
+            <Widget
+                city={inputData.city}
+                isFahrenheit={inputData.isFahrenheit}
+            />
+        }
         </div>
   );
 }
