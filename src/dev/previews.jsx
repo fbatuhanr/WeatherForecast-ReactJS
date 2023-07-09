@@ -2,8 +2,8 @@ import React from 'react'
 import {ComponentPreview, Previews} from '@react-buddy/ide-toolbox'
 import {PaletteTree} from './palette'
 import App from "../App";
-import Widget from "../components/Widget";
-import InputBar from "../components/InputBar";
+import WeatherWidget from "../components/WeatherWidget";
+import SelectableInputBar from "../components/SelectableInputBar";
 
 const ComponentPreviews = () => {
     return (
@@ -11,11 +11,11 @@ const ComponentPreviews = () => {
             <ComponentPreview path="/App">
                 <App/>
             </ComponentPreview>
-            <ComponentPreview path="/Widget">
-                <Widget/>
+            <ComponentPreview path="/WeatherWidget">
+                <WeatherWidget/>
             </ComponentPreview>
-            <ComponentPreview path="/InputBar">
-                <InputBar/>
+            <ComponentPreview path="/SelectableInputBar">
+                <SelectableInputBar/>
             </ComponentPreview>
         </Previews>
     )

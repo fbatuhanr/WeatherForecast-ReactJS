@@ -1,8 +1,9 @@
 import React, {useEffect, useState} from 'react';
+import axios from "axios";
+
 import {Container,Row,Col,Card} from "react-bootstrap";
 
-import {apiURL} from "../config/api";
-import axios from "axios";
+import {weatherApiURL} from "../config/api";
 
 /**
  * @param data
@@ -13,17 +14,15 @@ import axios from "axios";
  * @param data.wind
  */
 
-const Widget = ({city, isFahrenheit}) => {
+const WeatherWidget = ({city, isFahrenheit}) => {
 
     const [data, setData] = useState(null);
 
     useEffect(() => {
-        console.log("City:" + city, "isFahrenheit: "+isFahrenheit);
-        console.log(apiURL(city, isFahrenheit))
         axios
-            .get(apiURL(city, isFahrenheit))
+            .get(weatherApiURL(city, isFahrenheit))
             .then((response)=> {
-                console.log("sorgu");
+                console.log('Openweathermap Sorgu!');
                 setData(response.data);
             });
 
@@ -125,4 +124,4 @@ const Widget = ({city, isFahrenheit}) => {
     }
 };
 
-export default Widget;
+export default WeatherWidget;

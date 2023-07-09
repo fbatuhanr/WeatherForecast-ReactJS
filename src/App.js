@@ -1,10 +1,11 @@
 import {useState} from "react";
 
-import InputBar from "./components/InputBar";
-import Widget from "./components/Widget";
+import SelectableInputBar from "./components/SelectableInputBar";
+import WeatherWidget from "./components/WeatherWidget";
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
+
 
 function App() {
 
@@ -15,10 +16,10 @@ function App() {
 
     return (
         <div>
-        <InputBar input={input}/>
+        <SelectableInputBar input={input}/>
         {
             inputData.city &&
-            <Widget
+            <WeatherWidget
                 city={inputData.city}
                 isFahrenheit={inputData.isFahrenheit}
             />

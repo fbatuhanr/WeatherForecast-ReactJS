@@ -5,9 +5,10 @@ import axios from 'axios';
 import Select from 'react-select';
 
 import { Button, Col, Container, Form, Row } from "react-bootstrap";
-import {apiURL} from "../config/api";
 
-const InputBar = (props) => {
+import {cityApiUrlHeaders, cityApiURL} from "../config/api";
+
+const SelectableInputBar = (props) => {
 
     const inputRef = useRef(null);
     const unitRef = useRef(null);
@@ -36,20 +37,10 @@ const InputBar = (props) => {
         }
 
         const newInputKeyTimer = setTimeout(() => {
-
-            let config = {
-                headers: {
-                    'X-RapidAPI-Key': '2c3b4556d2mshca925566ecbe76ap13f707jsn4dc6d2c0f27a',
-                    'X-RapidAPI-Host': 'wft-geo-db.p.rapidapi.com'
-                },
-                params: {
-                    minPopulation: '25000',
-                    namePrefix: value
-                },
-            }
             axios
-                .get('https://wft-geo-db.p.rapidapi.com/v1/geo/cities', config)
+                .get(cityApiURL(value), cityApiUrlHeaders)
                 .then(response => {
+                    console.log('Rapidapi Sorgu!');
                     response.data.data.forEach(data => {
                         let newOptionData = { value: data.city, label: data.city };
                         setOptions(current => [...current, newOptionData]);
@@ -60,22 +51,26 @@ const InputBar = (props) => {
                     setOptions([]);
                 });
 
-        }, 3000)
+        }, 2000)
 
         setInputKeyTimer(newInputKeyTimer);
     };
     const handleTypeSelect = (e) => {
+        if(e == null || e.value == '') {
+            setSelectedOption("");
+            return;
+        }
         setSelectedOption(e.value);
     };
 
 
     return(
-        <Container className="m-2">
+        <Container fluid="xs">
             <Row>
-                <Col xs={{span:6, offset:3}}>
+                <Col md={{span:8, offset:2}} xs={{span:10, offset:1}} className="mt-3 mb-4">
                     <Row>
                         <Form className="d-flex">
-                            <Col xs={9}>
+                            <Col md={8} xs={7}>
                                 <Select
                                     className="basic-single me-2 rounded-pill"
                                     classNamePrefix="select"
@@ -98,7 +93,7 @@ const InputBar = (props) => {
                                     })}
                                 />
                             </Col>
-                            <Col xs={1}>
+                            <Col md={1} xs={2}>
                                 <Form.Check
                                     className="fahrenheit-switch mt-2"
                                     type="switch"
@@ -107,12 +102,13 @@ const InputBar = (props) => {
                                     ref={unitRef}
                                 />
                             </Col>
-                            <Col xs={2} className="d-grid">
+                            <Col md={3} xs={3} className="d-grid">
                                 <Button
                                     className="rounded-pill ms-2"
                                     variant="outline-primary"
-                                    onClick={handleSubmit}>
-                                    Submit
+                                    onClick={handleSubmit}
+                                    disabled={!selectedOption}>
+                                    Forecast!
                                 </Button>
                             </Col>
                         </Form>
@@ -123,4 +119,4 @@ const InputBar = (props) => {
     );
 }
 
-export default InputBar;
+export default SelectableInputBar;
