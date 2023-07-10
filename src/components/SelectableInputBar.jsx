@@ -2,9 +2,12 @@ import React, {useRef, useState} from 'react';
 
 import axios from 'axios';
 
-import Select from 'react-select';
+import Select, {components} from 'react-select';
+import AsyncSelect from 'react-select/async';
+import { AsyncPaginate } from 'react-select-async-paginate';
 
-import { Button, Col, Container, Form, Row } from "react-bootstrap";
+
+import { Button, Col, Container, Form, Row, Spinner } from "react-bootstrap";
 
 import {cityApiUrlHeaders, cityApiURL} from "../config/api";
 
@@ -12,56 +15,62 @@ const SelectableInputBar = (props) => {
 
     const inputRef = useRef(null);
     const unitRef = useRef(null);
-    const [inputKeyTimer, setInputKeyTimer] = useState(null)
-
-    const [isClearable, setIsClearable] = useState(true);
-    const [isSearchable, setIsSearchable] = useState(true);
-    const [isDisabled, setIsDisabled] = useState(false);
-    const [isLoading, setIsLoading] = useState(false);
-    const [isRtl, setIsRtl] = useState(false);
-
-    const [options, setOptions] = useState([]);
     const [selectedOption, setSelectedOption] = useState("");
 
-    const handleSubmit = () => props.input(selectedOption, unitRef.current.checked);
 
-
-    const handleInputChange = value => {
-
-        clearTimeout(inputKeyTimer);
-
-        if (value.trim().length === 0){
-            props.input(null);
-            setOptions([]);
-            return;
-        }
-
-        const newInputKeyTimer = setTimeout(() => {
-            axios
-                .get(cityApiURL(value), cityApiUrlHeaders)
-                .then(response => {
-                    console.log('Rapidapi Sorgu!');
-                    response.data.data.forEach(data => {
-                        let newOptionData = { value: data.city, label: data.city };
-                        setOptions(current => [...current, newOptionData]);
-                    });
-                })
-                .catch(error =>{
-                    console.log('Hata');
-                    setOptions([]);
-                });
-
-        }, 2000)
-
-        setInputKeyTimer(newInputKeyTimer);
+    const noOptionsMessage = (props) => {
+        return (
+            <components.NoOptionsMessage {...props}>
+                <i>The cities will be appear here</i>
+            </components.NoOptionsMessage>
+        );
     };
-    const handleTypeSelect = (e) => {
-        if(e == null || e.value == '') {
+    const loadingMessage = (props) => {
+        return (
+            <components.LoadingMessage {...props}>
+                <Spinner
+                    as="span"
+                    animation="grow"
+                    size="sm"
+                    role="status"
+                    aria-hidden="true"
+                />
+                Loading...
+            </components.LoadingMessage>
+        );
+    };
+    const loadOptions = (inputValue) => {
+
+        if (inputValue.trim().length === 0) return {options:[]};
+
+        return axios
+            .get(cityApiURL(inputValue), cityApiUrlHeaders)
+            .then(response => {
+                return {
+                    options: response.data.data.map(city=>{
+                        return {
+                            label: city.name,
+                            value: city.name
+                        }
+                    })
+                }
+            })
+            .catch(error => {
+                console.log('Hata');
+                return {options:[]};
+            });
+    }
+    const handleOnChange = (searchData) => {
+        console.log(searchData)
+
+        if(searchData == null || searchData.value == '') {
             setSelectedOption("");
             return;
         }
-        setSelectedOption(e.value);
-    };
+        setSelectedOption(searchData.value);
+    }
+
+    const handleSubmit = () => props.input(selectedOption, unitRef.current.checked);
 
 
     return(
@@ -71,26 +80,14 @@ const SelectableInputBar = (props) => {
                     <Row>
                         <Form className="d-flex">
                             <Col md={8} xs={7}>
-                                <Select
-                                    className="basic-single me-2 rounded-pill"
-                                    classNamePrefix="select"
-                                    name="cities"
 
-                                    options={options}
-                                    defaultValue={options[0]}
-
-                                    isDisabled={isDisabled}
-                                    isLoading={isLoading}
-                                    isClearable={isClearable}
-                                    isRtl={isRtl}
-                                    isSearchable={isSearchable}
-
-                                    ref={inputRef}
-                                    onInputChange={handleInputChange}
-                                    onChange={handleTypeSelect}
-                                    value={options.find(function (option) {
-                                        return option.value === selectedOption;
-                                    })}
+                                <AsyncPaginate
+                                    className="me-2"
+                                    placeholder="Type a city name"
+                                    debounceTimeout={1000}
+                                    onChange={handleOnChange}
+                                    loadOptions={loadOptions}
+                                    components={{ loadingMessage, noOptionsMessage }}
                                 />
                             </Col>
                             <Col md={1} xs={2}>
